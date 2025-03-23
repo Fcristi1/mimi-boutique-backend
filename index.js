@@ -14,6 +14,11 @@ app.use(express.json());
 // Routes
 app.use('/api/products', productRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('Welcome to Mimi Boutique API');
+});
+
 // Initialize database and start server
 createProductTable().then(() => {
   app.listen(PORT, () => {
