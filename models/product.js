@@ -1,27 +1,28 @@
-const db = require('../config/db');
+const { query } = require('../config/db');
 
 const createProductTable = async () => {
-  const queryText = `
-    CREATE TABLE IF NOT EXISTS products (
-      id SERIAL PRIMARY KEY,
-      brand VARCHAR(50) NOT NULL,
-      size VARCHAR(10) NOT NULL,
-      model VARCHAR(100) NOT NULL,
-      color VARCHAR(50) NOT NULL,
-      price NUMERIC(10, 2) NOT NULL
-    )
-  `;
-  await db.query(queryText);
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100),
+        price NUMERIC
+      )
+    `);
+  } catch (err) {
+    console.error('Error creating product table:', err);
+    throw err;
+  }
 };
 
 const getAllProducts = async () => {
-  const result = await db.query('SELECT * FROM products');
+  const result = await query('SELECT * FROM products');
   return result.rows;
 };
 
 const addProduct = async (product) => {
   const { brand, size, model, color, price } = product;
-  const result = await db.query(
+  const result = await query(
     'INSERT INTO products (brand, size, model, color, price) VALUES ($1, $2, $3, $4, $5) RETURNING *',
     [brand, size, model, color, price]
   );
